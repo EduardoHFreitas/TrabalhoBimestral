@@ -57,4 +57,14 @@ public class Cliente {
 	public EstadoCivil getEstadoCivil() {
 		return estadoCivil;
 	}
+	
+	public Cliente() { //
+		this(0, null);
+	}
+
+	public Cliente(int id, String nome) { //
+		super();
+		this.id = id;
+		this.nome = nome;
+	}
 }
