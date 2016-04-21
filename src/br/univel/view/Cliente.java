@@ -15,8 +15,6 @@ public class Cliente {
 
 	@Coluna(nome="CLI_ENDERECO", tamanho=100)
 	private String endereco;
-	
-	@Coluna(nome="CLI_TELEFONE", tamanho=15)
 	private String telefone;
 
 	@Coluna(nome="CLI_ESTADO-CIVIL")
