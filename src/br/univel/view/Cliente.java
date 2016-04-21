@@ -60,7 +60,7 @@ public class Cliente {
 		this(0, null);
 	}
 
-	public Cliente(int id, String nome) { // Construtor com parametros
+	public Cliente(int id, String nome) { // Construtor com parametros 
 		super();
 		this.id = id;
 		this.nome = nome;
