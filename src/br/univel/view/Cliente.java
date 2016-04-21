@@ -56,11 +56,11 @@ public class Cliente {
 		return estadoCivil;
 	}
 	
-	public Cliente() { //
+	public Cliente() { // Construtor sem parametros
 		this(0, null);
 	}
 
-	public Cliente(int id, String nome) { //
+	public Cliente(int id, String nome) { // Construtor com parametros
 		super();
 		this.id = id;
 		this.nome = nome;
