@@ -7,29 +7,28 @@ import java.sql.SQLException;
 
 import br.univel.abstratc.SqlGen;
 
-public class Principal extends SqlGen {
+public class SqlGenImplementation extends SqlGen {
 
 	private Connection con;
 
-	public Principal() throws SQLException{
+	public SqlGenImplementation() throws SQLException{
 		StartConnection();
 
+		CloseConnection();
 	}
 
+	private void CloseConnection() throws SQLException {
+		con.close();
+    }
+
+
 	private void StartConnection() throws SQLException {
-		String url = "jdbc:h2:C:/Users/ehdfreitas/Desktop/DBA/banco.mv";
+		System.out.println("é aqui mesmo");
+		String url = "jdbc:h2:D:/Eduardo/Desktop/DBA";
 		String user = "admin";
 		String pass = "admin";
 
 		con = DriverManager.getConnection(url, user, pass);
-	}
-
-	public static void main (String[] args){
-		try {
-			new Principal();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
 	}
 
 	@Override
@@ -72,5 +71,13 @@ public class Principal extends SqlGen {
 	protected PreparedStatement getSqlDeleteById(Connection con, Object obj) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public static void main (String[] args){
+		try {
+			new SqlGenImplementation();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }
