@@ -21,10 +21,15 @@ public class SqlGenImplementation extends SqlGen {
 		Cliente oi = new Cliente(1, "Eduardo", "treta", "treta", EstadoCivil.CASADO);
 
 		StartConnection();
+/*
+		try (PreparedStatement ps = con.prepareStatement(getCreateTable(con, oi))) {
+			ps.executeUpdate();
+		}
 
-		try (PreparedStatement ps = con.prepareStatement(getCreateTable(con, oi))) {}
-
-		getDropTable(con, oi);
+		try (PreparedStatement ps = con.prepareStatement(getDropTable(con, oi))) {
+			ps.executeUpdate();
+		}
+*/
 
 		/*
 		 * PreparedStatement teste = getSqlInsert(con, oi); teste.setInt(1, 5);
@@ -41,9 +46,11 @@ public class SqlGenImplementation extends SqlGen {
 		 * System.out.println(teste2.executeQuery());
 		 */
 
-		PreparedStatement teste3 = getSqlSelectById(con, oi);
+/*		PreparedStatement teste3 = getSqlSelectById(con, oi);
 		System.out.println(teste3.executeQuery());
-
+*/
+		PreparedStatement teste3 = getSqlUpdateById(con, oi);
+		System.out.println(teste3.executeQuery());
 
 		CloseConnection();
 	}
@@ -365,8 +372,57 @@ public class SqlGenImplementation extends SqlGen {
 
 	@Override
 	protected PreparedStatement getSqlUpdateById(Connection con, Object obj) {
-		// TODO Auto-generated method stub
-		return null;
+		Class<? extends Object> cl = obj.getClass();
+
+		StringBuilder sb = new StringBuilder();
+
+		// Declaração da tabela.
+		String nomeTabela;
+
+		if (cl.isAnnotationPresent(Tabela.class)) {
+			Tabela anotacaoTabela = cl.getAnnotation(Tabela.class);
+			nomeTabela = anotacaoTabela.value();
+		} else {
+			nomeTabela = cl.getSimpleName().toUpperCase();
+		}
+
+		sb.append("UPDATE * FROM ").append(nomeTabela).append(" WHERE ");
+
+		Field[] atributos = cl.getDeclaredFields();
+
+		for (int i = 0; i < atributos.length; i++) {
+
+			Field field = atributos[i];
+
+			if (field.isAnnotationPresent(Coluna.class)) {
+
+				Coluna anotacaoColuna = field.getAnnotation(Coluna.class);
+
+				if (anotacaoColuna.pk()) {
+
+					if (anotacaoColuna.nome().isEmpty()) {
+						sb.append(field.getName().toUpperCase()).append(" = ").append("1");
+					} else {
+						sb.append(anotacaoColuna.nome()).append(" = ").append("1");
+					}
+
+				}
+
+			}
+		}
+
+		String strSql = sb.toString();
+
+		PreparedStatement ps = null;
+		try {
+			ps = con.prepareStatement(strSql);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		}
+
+		return ps;
 	}
 
 	@Override
