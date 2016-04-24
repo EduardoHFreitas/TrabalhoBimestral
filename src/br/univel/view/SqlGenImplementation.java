@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import br.univel.abstratc.SqlGen;
 import br.univel.anotations.Coluna;
 import br.univel.anotations.Tabela;
+import br.univel.enums.EstadoCivil;
 
 public class SqlGenImplementation extends SqlGen {
 
@@ -16,14 +17,16 @@ public class SqlGenImplementation extends SqlGen {
 
 	public SqlGenImplementation() throws SQLException{
 		//StartConnection();
-		
-		Cliente oi = new Cliente();
-		
-		oi.
-		
-		getCreateTable(con, oi);
 
-		CloseConnection();
+		Cliente oi = new Cliente(1, "Eduardo", "treta", "treta", EstadoCivil.CASADO);
+
+		//con = new ConexaoFalsa();
+
+		//getCreateTable(con, oi);
+		String strCreateTable = getCreateTable(oi);
+		System.out.println(strCreateTable);
+
+		//CloseConnection();
 	}
 
 	private void CloseConnection() throws SQLException {
@@ -32,16 +35,18 @@ public class SqlGenImplementation extends SqlGen {
 
 
 	private void StartConnection() throws SQLException {
-		System.out.println("é aqui mesmo");
-		String url = "jdbc:h2:D:/Eduardo/Desktop/DBA/";
+
+		String url = "jdbc:h2:D:/Eduardo/Desktop/DBA/banco";
 		String user = "admin";
 		String pass = "admin";
 
 		con = DriverManager.getConnection(url, user, pass);
+
 	}
 
 	@Override
-	protected String getCreateTable(Connection con, Object obj) {
+	protected String getCreateTable(Object obj) {
+	//protected String getCreateTable(Connection con, Object obj) {
 
 		Class<?> cl = obj.getClass();
 
@@ -68,82 +73,85 @@ public class SqlGenImplementation extends SqlGen {
 			Field[] atributos = cl.getDeclaredFields();
 
 			// Declaração das colunas
-			{
-				for (int i = 0; i < atributos.length; i++) {
+			for (int i = 0; i < atributos.length; i++) {
 
-					Field field = atributos[i];
+				Field field = atributos[i];
 
-					String nomeColuna;
-					String tipoColuna;
+				String nomeColuna;
+				String tipoColuna;
+
+				if (field.isAnnotationPresent(Coluna.class)) {
+					Coluna anotacaoColuna = field.getAnnotation(Coluna.class);
+
+					if (anotacaoColuna.nome().isEmpty()) {
+						nomeColuna = field.getName().toUpperCase();
+					} else {
+						nomeColuna = anotacaoColuna.nome();
+					}
+
+				} else {
+					nomeColuna = field.getName().toUpperCase();
+				}
+
+				Class<?> tipoParametro = field.getType();
+
+				if (tipoParametro.equals(String.class)) {
+					tipoColuna = "VARCHAR(";
 
 					if (field.isAnnotationPresent(Coluna.class)) {
 						Coluna anotacaoColuna = field.getAnnotation(Coluna.class);
 
-						if (anotacaoColuna.nome().isEmpty()) {
-							nomeColuna = field.getName().toUpperCase();
+						if (anotacaoColuna.tamanho() == 0) {
+							tipoColuna += "100)";
 						} else {
-							nomeColuna = anotacaoColuna.nome();
+							tipoColuna += anotacaoColuna.tamanho() + ")";
 						}
-
-					} else {
-						nomeColuna = field.getName().toUpperCase();
 					}
 
-					Class<?> tipoParametro = field.getType();
+				} else if (tipoParametro.equals(int.class)) {
+					tipoColuna = "INT";
 
-					if (tipoParametro.equals(String.class)) {
-						tipoColuna = "VARCHAR(100)";
-
-					} else if (tipoParametro.equals(int.class)) {
-						tipoColuna = "INT";
-
-					} else {
-						tipoColuna = "DESCONHECIDO";
-					}
-
-					if (i > 0) {
-						sb.append(",");
-					}
-
-					sb.append("\n\t").append(nomeColuna).append(' ').append(tipoColuna);
+				} else {
+					tipoColuna = "DESCONHECIDO";
 				}
+
+				if (i > 0) {
+					sb.append(",");
+				}
+
+				sb.append("\n\t").append(nomeColuna).append(' ').append(tipoColuna);
 			}
 
 			// Declaração das chaves primárias
-			{
+			sb.append(",\n\tPRIMARY KEY( ");
 
-				sb.append(",\n\tPRIMARY KEY( ");
+			for (int i = 0, achou = 0; i < atributos.length; i++) {
 
-				for (int i = 0, achou = 0; i < atributos.length; i++) {
+				Field field = atributos[i];
 
-					Field field = atributos[i];
+				if (field.isAnnotationPresent(Coluna.class)) {
 
-					if (field.isAnnotationPresent(Coluna.class)) {
+					Coluna anotacaoColuna = field.getAnnotation(Coluna.class);
 
-						Coluna anotacaoColuna = field.getAnnotation(Coluna.class);
+					if (anotacaoColuna.pk()) {
 
-						if (anotacaoColuna.pk()) {
-
-							if (achou > 0) {
-								sb.append(", ");
-							}
-
-							if (anotacaoColuna.nome().isEmpty()) {
-								sb.append(field.getName().toUpperCase());
-							} else {
-								sb.append(anotacaoColuna.nome());
-							}
-
-							achou++;
+						if (achou > 0) {
+							sb.append(", ");
 						}
 
-					}
-				}
+						if (anotacaoColuna.nome().isEmpty()) {
+							sb.append(field.getName().toUpperCase());
+						} else {
+							sb.append(anotacaoColuna.nome());
+						}
 
-				sb.append(" )");
+						achou++;
+					}
+
+				}
 			}
 
-			sb.append("\n);");
+			sb.append(" )\n);");
 
 			return sb.toString(); // Cria a String
 
@@ -194,5 +202,11 @@ public class SqlGenImplementation extends SqlGen {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	protected String getCreateTable(Connection con, Object obj) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -16,7 +16,7 @@ public class Cliente {
 	@Coluna(nome="CLI_ENDERECO", tamanho=100)
 	private String endereco;
 
-	@Coluna(nome="CLI_TELEFONE", tamanho=100)
+	@Coluna(nome="CLI_TELEFONE", tamanho=15)
 	private String telefone;
 
 	@Coluna(nome="CLI_ESTADO-CIVIL")
@@ -59,12 +59,15 @@ public class Cliente {
 	}
 
 	public Cliente() { // Construtor sem parametros
-		this(0, null);
+		this(0, null, null, null, null);
 	}
 
-	public Cliente(int id, String nome) { // Construtor com parametros
+	public Cliente(int id, String nome, String endereco, String telefone, EstadoCivil estadoCivil) { // Construtor com parametros
 		super();
 		this.id = id;
 		this.nome = nome;
+		this.endereco = endereco;
+		this.telefone = telefone;
+		this.estadoCivil = estadoCivil;
 	}
 }
