@@ -1,18 +1,35 @@
 package br.univel.view;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 import br.univel.abstratc.SqlGen;
 
 public class Principal extends SqlGen {
 
-	public Principal(){
+	private Connection con;
+
+	public Principal() throws SQLException{
+		StartConnection();
 
 	}
 
+	private void StartConnection() throws SQLException {
+		String url = "jdbc:h2:C:/Users/ehdfreitas/Desktop/DBA/banco.mv";
+		String user = "admin";
+		String pass = "admin";
+
+		con = DriverManager.getConnection(url, user, pass);
+	}
+
 	public static void main (String[] args){
-		new Principal();
+		try {
+			new Principal();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
