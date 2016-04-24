@@ -20,12 +20,20 @@ public class SqlGenImplementation extends SqlGen {
 
 		StartConnection();
 
-		getCreateTable(con, oi);
+		try (PreparedStatement ps = con.prepareStatement(getCreateTable(con, oi))){}
+
 		getDropTable(con, oi);
 
 		PreparedStatement teste = getSqlInsert(con, oi);
-		teste.executeUpdate();
+		teste.setInt(1, 1);
+		teste.setString(2, oi.getNome());
+		teste.setString(3, oi.getEndereco());
+		teste.setString(4, oi.getTelefone());
+		teste.setInt(5, oi.getEstadoCivil().ordinal());
 
+		int res = teste.executeUpdate();
+
+		System.out.println(res);
 
 		CloseConnection();
 	}
@@ -241,41 +249,39 @@ public class SqlGenImplementation extends SqlGen {
 			}
 			sb.append('?');
 		}
-		sb.append(')');
+		sb.append(");");
 
 		String strSql = sb.toString();
 
 		PreparedStatement ps = null;
 		try {
 			ps = con.prepareStatement(strSql);
-			for (int i = 0; i < atributos.length; i++) {
+/*			for (int i = 0; i < atributos.length; i++) {
 				Field field = atributos[i];
 
 				// importante não esquecer
 				field.setAccessible(true);
 				if (field.getType().equals(int.class)) {
 					ps.setInt(i + 1, field.getInt(obj));
-
 				} else if (field.getType().equals(String.class)) {
 					ps.setString(i + 1, String.valueOf(field.get(obj)));
-
+				} else if (field.getType().equals(EstadoCivil.class)) {
+					ps.setString(i + 1, String.valueOf(field.get(obj)));
 				} else {
 					throw new RuntimeException("Tipo não suportado, falta implementar.");
 
 				}
-			}
-
+			} */
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
-		} catch (IllegalAccessException e) {
+		} /*catch (IllegalAccessException e) {
 			e.printStackTrace();
-		}
+		} */
 
 		return ps;
 	}
-
 
 	@Override
 	protected PreparedStatement getSqlSelectAll(Connection con, Object obj) {

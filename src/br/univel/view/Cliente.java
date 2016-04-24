@@ -1,7 +1,7 @@
 package br.univel.view;
 
-import br.univel.anotations.Tabela;
 import br.univel.anotations.Coluna;
+import br.univel.anotations.Tabela;
 import br.univel.enums.EstadoCivil;
 
 @Tabela("CLIENTES")
@@ -19,7 +19,7 @@ public class Cliente {
 	@Coluna(nome="CLI_TELEFONE", tamanho=15)
 	private String telefone;
 
-	@Coluna(nome="CLI_ESTADO-CIVIL")
+	@Coluna(nome="CLI_ESTADOCIVIL")
 	private EstadoCivil estadoCivil; // Gravar o ordinal
 
 	public int getId() {
