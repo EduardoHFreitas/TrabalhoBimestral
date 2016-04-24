@@ -4,7 +4,9 @@ import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import br.univel.abstratc.SqlGen;
 import br.univel.anotations.Coluna;
@@ -20,20 +22,26 @@ public class SqlGenImplementation extends SqlGen {
 
 		StartConnection();
 
-		try (PreparedStatement ps = con.prepareStatement(getCreateTable(con, oi))){}
+		try (PreparedStatement ps = con.prepareStatement(getCreateTable(con, oi))) {
+		}
 
 		getDropTable(con, oi);
 
-		PreparedStatement teste = getSqlInsert(con, oi);
-		teste.setInt(1, 1);
+/*		PreparedStatement teste = getSqlInsert(con, oi);
+		teste.setInt(1, 5);
 		teste.setString(2, oi.getNome());
 		teste.setString(3, oi.getEndereco());
 		teste.setString(4, oi.getTelefone());
 		teste.setInt(5, oi.getEstadoCivil().ordinal());
 
-		int res = teste.executeUpdate();
+		teste.executeUpdate();
+*/
 
-		System.out.println(res);
+/*		PreparedStatement teste2 = getSqlSelectAll(con, oi);
+
+		System.out.println(teste2.executeQuery());
+*/
+
 
 		CloseConnection();
 	}
@@ -256,37 +264,46 @@ public class SqlGenImplementation extends SqlGen {
 		PreparedStatement ps = null;
 		try {
 			ps = con.prepareStatement(strSql);
-/*			for (int i = 0; i < atributos.length; i++) {
-				Field field = atributos[i];
-
-				// importante não esquecer
-				field.setAccessible(true);
-				if (field.getType().equals(int.class)) {
-					ps.setInt(i + 1, field.getInt(obj));
-				} else if (field.getType().equals(String.class)) {
-					ps.setString(i + 1, String.valueOf(field.get(obj)));
-				} else if (field.getType().equals(EstadoCivil.class)) {
-					ps.setString(i + 1, String.valueOf(field.get(obj)));
-				} else {
-					throw new RuntimeException("Tipo não suportado, falta implementar.");
-
-				}
-			} */
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
-		} /*catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} */
+		}
 
 		return ps;
 	}
 
 	@Override
 	protected PreparedStatement getSqlSelectAll(Connection con, Object obj) {
-		// TODO Auto-generated method stub
-		return null;
+		Class<? extends Object> cl = obj.getClass();
+
+		StringBuilder sb = new StringBuilder();
+
+		// Declaração da tabela.
+		String nomeTabela;
+
+		if (cl.isAnnotationPresent(Tabela.class)) {
+			Tabela anotacaoTabela = cl.getAnnotation(Tabela.class);
+			nomeTabela = anotacaoTabela.value();
+		} else {
+			nomeTabela = cl.getSimpleName().toUpperCase();
+		}
+
+		sb.append("SELECT * FROM ").append(nomeTabela).append(";");
+
+		String strSql = sb.toString();
+
+		PreparedStatement ps = null;
+		try {
+			ps = con.prepareStatement(strSql);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		}
+
+		return ps;
+
 	}
 
 	@Override
