@@ -22,25 +22,27 @@ public class SqlGenImplementation extends SqlGen {
 
 		StartConnection();
 
-		try (PreparedStatement ps = con.prepareStatement(getCreateTable(con, oi))) {
-		}
+		try (PreparedStatement ps = con.prepareStatement(getCreateTable(con, oi))) {}
 
 		getDropTable(con, oi);
 
-/*		PreparedStatement teste = getSqlInsert(con, oi);
-		teste.setInt(1, 5);
-		teste.setString(2, oi.getNome());
-		teste.setString(3, oi.getEndereco());
-		teste.setString(4, oi.getTelefone());
-		teste.setInt(5, oi.getEstadoCivil().ordinal());
+		/*
+		 * PreparedStatement teste = getSqlInsert(con, oi); teste.setInt(1, 5);
+		 * teste.setString(2, oi.getNome()); teste.setString(3,
+		 * oi.getEndereco()); teste.setString(4, oi.getTelefone());
+		 * teste.setInt(5, oi.getEstadoCivil().ordinal());
+		 *
+		 * teste.executeUpdate();
+		 */
 
-		teste.executeUpdate();
-*/
+		/*
+		 * PreparedStatement teste2 = getSqlSelectAll(con, oi);
+		 *
+		 * System.out.println(teste2.executeQuery());
+		 */
 
-/*		PreparedStatement teste2 = getSqlSelectAll(con, oi);
-
-		System.out.println(teste2.executeQuery());
-*/
+		PreparedStatement teste3 = getSqlSelectById(con, oi);
+		System.out.println(teste3.executeQuery());
 
 
 		CloseConnection();
@@ -308,8 +310,57 @@ public class SqlGenImplementation extends SqlGen {
 
 	@Override
 	protected PreparedStatement getSqlSelectById(Connection con, Object obj) {
-		// TODO Auto-generated method stub
-		return null;
+		Class<? extends Object> cl = obj.getClass();
+
+		StringBuilder sb = new StringBuilder();
+
+		// Declaração da tabela.
+		String nomeTabela;
+
+		if (cl.isAnnotationPresent(Tabela.class)) {
+			Tabela anotacaoTabela = cl.getAnnotation(Tabela.class);
+			nomeTabela = anotacaoTabela.value();
+		} else {
+			nomeTabela = cl.getSimpleName().toUpperCase();
+		}
+
+		sb.append("SELECT * FROM ").append(nomeTabela).append(" WHERE ");
+
+		Field[] atributos = cl.getDeclaredFields();
+
+		for (int i = 0; i < atributos.length; i++) {
+
+			Field field = atributos[i];
+
+			if (field.isAnnotationPresent(Coluna.class)) {
+
+				Coluna anotacaoColuna = field.getAnnotation(Coluna.class);
+
+				if (anotacaoColuna.pk()) {
+
+					if (anotacaoColuna.nome().isEmpty()) {
+						sb.append(field.getName().toUpperCase()).append(" = ").append("1");
+					} else {
+						sb.append(anotacaoColuna.nome()).append(" = ").append("1");
+					}
+
+				}
+
+			}
+		}
+
+		String strSql = sb.toString();
+
+		PreparedStatement ps = null;
+		try {
+			ps = con.prepareStatement(strSql);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		}
+
+		return ps;
 	}
 
 	@Override
