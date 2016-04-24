@@ -22,9 +22,4 @@ public abstract class SqlGen {
 
 	protected abstract PreparedStatement getSqlDeleteById(Connection con, Object obj);
 
-	protected String getCreateTable(Object obj) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

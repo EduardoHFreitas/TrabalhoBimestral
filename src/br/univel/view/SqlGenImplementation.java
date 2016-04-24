@@ -15,24 +15,21 @@ public class SqlGenImplementation extends SqlGen {
 
 	private Connection con;
 
-	public SqlGenImplementation() throws SQLException{
-		//StartConnection();
-
+	public SqlGenImplementation() throws SQLException {
 		Cliente oi = new Cliente(1, "Eduardo", "treta", "treta", EstadoCivil.CASADO);
 
-		//con = new ConexaoFalsa();
+		StartConnection();
 
-		//getCreateTable(con, oi);
-		String strCreateTable = getCreateTable(oi);
+		getCreateTable(con, oi);
+		String strCreateTable = getCreateTable(con, oi);
 		System.out.println(strCreateTable);
 
-		//CloseConnection();
+		CloseConnection();
 	}
 
 	private void CloseConnection() throws SQLException {
 		con.close();
-    }
-
+	}
 
 	private void StartConnection() throws SQLException {
 
@@ -45,8 +42,7 @@ public class SqlGenImplementation extends SqlGen {
 	}
 
 	@Override
-	protected String getCreateTable(Object obj) {
-	//protected String getCreateTable(Connection con, Object obj) {
+	protected String getCreateTable(Connection con, Object obj) {
 
 		Class<?> cl = obj.getClass();
 
@@ -56,19 +52,17 @@ public class SqlGenImplementation extends SqlGen {
 			// append adciona os caracteres
 
 			// Declaração da tabela.
-			{
-				String nomeTabela;
-				if (cl.isAnnotationPresent(Tabela.class)) {
+			String nomeTabela;
+			if (cl.isAnnotationPresent(Tabela.class)) {
 
-					Tabela anotacaoTabela = cl.getAnnotation(Tabela.class);
-					nomeTabela = anotacaoTabela.value();
+				Tabela anotacaoTabela = cl.getAnnotation(Tabela.class);
+				nomeTabela = anotacaoTabela.value();
 
-				} else {
-					nomeTabela = cl.getSimpleName().toUpperCase();
+			} else {
+				nomeTabela = cl.getSimpleName().toUpperCase();
 
-				}
-				sb.append("CREATE TABLE ").append(nomeTabela).append(" (");
 			}
+			sb.append("CREATE TABLE ").append(nomeTabela).append(" (");
 
 			Field[] atributos = cl.getDeclaredFields();
 
@@ -107,10 +101,10 @@ public class SqlGenImplementation extends SqlGen {
 							tipoColuna += anotacaoColuna.tamanho() + ")";
 						}
 					}
-
 				} else if (tipoParametro.equals(int.class)) {
 					tipoColuna = "INT";
-
+				} else if (tipoParametro.equals(EstadoCivil.class)) {
+					tipoColuna = "INT(1)";
 				} else {
 					tipoColuna = "DESCONHECIDO";
 				}
@@ -162,8 +156,31 @@ public class SqlGenImplementation extends SqlGen {
 
 	@Override
 	protected String getDropTable(Connection con, Object obj) {
-		// TODO Auto-generated method stub
-		return null;
+		Class<?> cl = obj.getClass();
+
+		try {
+
+			StringBuilder sb = new StringBuilder(); // Construtor de String
+			// append adciona os caracteres
+
+			// Declaração da tabela.
+			String nomeTabela;
+			if (cl.isAnnotationPresent(Tabela.class)) {
+
+				Tabela anotacaoTabela = cl.getAnnotation(Tabela.class);
+				nomeTabela = anotacaoTabela.value();
+
+			} else {
+				nomeTabela = cl.getSimpleName().toUpperCase();
+
+			}
+			sb.append("DROP TABLE ").append(nomeTabela).append(");");
+
+			return sb.toString(); // Cria a String
+
+		} catch (SecurityException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override
@@ -196,17 +213,11 @@ public class SqlGenImplementation extends SqlGen {
 		return null;
 	}
 
-	public static void main (String[] args){
+	public static void main(String[] args) {
 		try {
 			new SqlGenImplementation();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-	}
-
-	@Override
-	protected String getCreateTable(Connection con, Object obj) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }
