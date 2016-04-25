@@ -50,9 +50,12 @@ public class SqlGenImplementation extends SqlGen {
 		System.out.println(teste3.executeQuery());
 */
 
-		PreparedStatement teste4 = getSqlUpdateById(con, oi);
-		System.out.println(teste4);
-		//System.out.println(teste4.executeQuery());
+/*		PreparedStatement teste4 = getSqlUpdateById(con, oi);
+		System.out.println(teste4.executeQuery());
+*/
+/*		PreparedStatement teste5 = getSqlDeleteById(con, oi);
+		System.out.println(teste5);*/
+		//System.out.println(teste5.executeQuery());
 
 		CloseConnection();
 	}
@@ -472,8 +475,65 @@ public class SqlGenImplementation extends SqlGen {
 
 	@Override
 	protected PreparedStatement getSqlDeleteById(Connection con, Object obj) {
-		// TODO Auto-generated method stub
-		return null;
+		Class<? extends Object> cl = obj.getClass();
+
+		StringBuilder sb = new StringBuilder();
+
+		// Declaração da tabela.
+		String nomeTabela;
+
+		if (cl.isAnnotationPresent(Tabela.class)) {
+			Tabela anotacaoTabela = cl.getAnnotation(Tabela.class);
+			nomeTabela = anotacaoTabela.value();
+		} else {
+			nomeTabela = cl.getSimpleName().toUpperCase();
+		}
+
+		sb.append("DELETE FROM ").append(nomeTabela);
+
+		Field[] atributos = cl.getDeclaredFields();
+
+		sb.append(" WHERE ");
+
+		for (int i = 0; i < atributos.length; i++) {
+
+			Field field = atributos[i];
+
+			if (field.isAnnotationPresent(Coluna.class)) {
+
+				Coluna anotacaoColuna = field.getAnnotation(Coluna.class);
+
+				if (anotacaoColuna.pk()) {
+
+					if (anotacaoColuna.nome().isEmpty()) {
+
+						sb.append(field.getName().toUpperCase()).append(" = ").append("1");
+
+					} else {
+
+						sb.append(anotacaoColuna.nome()).append(" = ").append("1");
+
+					}
+
+				}
+			}
+		}
+
+		sb.append(";");
+
+		String strSql = sb.toString();
+
+		PreparedStatement ps = null;
+		try {
+			ps = con.prepareStatement(strSql);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		}
+
+		return ps;
+
 	}
 
 	public static void main(String[] args) {
