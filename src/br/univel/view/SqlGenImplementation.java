@@ -49,8 +49,10 @@ public class SqlGenImplementation extends SqlGen {
 /*		PreparedStatement teste3 = getSqlSelectById(con, oi);
 		System.out.println(teste3.executeQuery());
 */
-		PreparedStatement teste3 = getSqlUpdateById(con, oi);
-		System.out.println(teste3.executeQuery());
+
+		PreparedStatement teste4 = getSqlUpdateById(con, oi);
+		System.out.println(teste4);
+		//System.out.println(teste4.executeQuery());
 
 		CloseConnection();
 	}
@@ -386,9 +388,47 @@ public class SqlGenImplementation extends SqlGen {
 			nomeTabela = cl.getSimpleName().toUpperCase();
 		}
 
-		sb.append("UPDATE * FROM ").append(nomeTabela).append(" WHERE ");
+		sb.append("UPDATE ").append(nomeTabela);
 
 		Field[] atributos = cl.getDeclaredFields();
+
+		for (int i = 0, cont = 0; i < atributos.length; i++) {
+
+			Field field = atributos[i];
+
+			if (field.isAnnotationPresent(Coluna.class)) {
+
+				Coluna anotacaoColuna = field.getAnnotation(Coluna.class);
+
+				if (!anotacaoColuna.pk()) {
+
+					cont++;
+
+					if (cont == 1)
+						sb.append("\nSET ");
+
+					if (anotacaoColuna.nome().isEmpty()) {
+
+						sb.append(field.getName().toUpperCase()).append(" = ");
+
+					} else {
+
+						sb.append(anotacaoColuna.nome()).append(" = ");
+
+					}
+
+
+					if (field.getType().equals(String.class)){
+						sb.append("'1', \n");
+					} else {
+						sb.append("2 \n ");
+					}
+				}
+
+			}
+		}
+
+		sb.append(" WHERE ");
 
 		for (int i = 0; i < atributos.length; i++) {
 
@@ -401,15 +441,20 @@ public class SqlGenImplementation extends SqlGen {
 				if (anotacaoColuna.pk()) {
 
 					if (anotacaoColuna.nome().isEmpty()) {
+
 						sb.append(field.getName().toUpperCase()).append(" = ").append("1");
+
 					} else {
+
 						sb.append(anotacaoColuna.nome()).append(" = ").append("1");
+
 					}
 
 				}
-
 			}
 		}
+
+		sb.append(";");
 
 		String strSql = sb.toString();
 
