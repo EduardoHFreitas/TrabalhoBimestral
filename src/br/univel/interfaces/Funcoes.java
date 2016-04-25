@@ -4,6 +4,7 @@ import java.util.List;
 import br.univel.view.Cliente;
 
 public interface Funcoes <obj, id> {
+
 	public void salvar(obj id);
 
 	public obj buscar(obj id);
