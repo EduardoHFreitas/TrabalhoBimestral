@@ -16,10 +16,10 @@ public abstract class SqlGen {
 
 	protected abstract PreparedStatement getSqlSelectAll(Connection con, Object obj);
 
-	protected abstract PreparedStatement getSqlSelectById(Connection con, Object obj);
+	protected abstract PreparedStatement getSqlSelectById(Connection con, Object obj, int id);
 
-	protected abstract PreparedStatement getSqlUpdateById(Connection con, Object obj);
+	protected abstract PreparedStatement getSqlUpdateById(Connection con, Object obj, int id);
 
-	protected abstract PreparedStatement getSqlDeleteById(Connection con, Object obj);
+	protected abstract PreparedStatement getSqlDeleteById(Connection con, Object obj, int id);
 
 }

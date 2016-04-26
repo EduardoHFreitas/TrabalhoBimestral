@@ -19,49 +19,11 @@ public class SqlGenImplementation extends SqlGen {
 
 	public SqlGenImplementation() throws SQLException {
 		
-		//Cliente oi = new Cliente(1, "Eduardo", "treta", "treta", EstadoCivil.CASADO);
+		startConnection();
 
-		StartConnection();
+	}
 
-		/*try (PreparedStatement ps = con.prepareStatement(getCreateTable(con, oi))) {
-			ps.executeUpdate();
-		}*/
-/*
-		try (PreparedStatement ps = con.prepareStatement(getDropTable(con, oi))) {
-			ps.executeUpdate();
-		}
-*/
-
-/*		 PreparedStatement teste = getSqlInsert(con, oi);
-		 teste.setInt(1, 5);
-		 teste.setString(2, oi.getNome());
-		 teste.setString(3, oi.getEndereco());
-		 teste.setString(4, oi.getTelefone());
-		 teste.setInt(5, oi.getEstadoCivil().ordinal());
-	 
-		 teste.executeUpdate();*/
-
-		/*
-		 * PreparedStatement teste2 = getSqlSelectAll(con, oi);
-		 *
-		 * System.out.println(teste2.executeQuery());
-		 */
-
-/*		PreparedStatement teste3 = getSqlSelectById(con, oi);
-		System.out.println(teste3.executeQuery());
-*/
-
-/*		PreparedStatement teste4 = getSqlUpdateById(con, oi);
-		System.out.println(teste4.executeQuery());
-*/
-/*		PreparedStatement teste5 = getSqlDeleteById(con, oi);
-		System.out.println(teste5);
-		//System.out.println(teste5.executeQuery());
-
-		CloseConnection();
-*/	}
-
-	private void StartConnection() throws SQLException {
+	private void startConnection() throws SQLException {
 
 /*		String url = "jdbc:h2:D:/Eduardo/Desktop/DBA/banco";
 		String user = "admin";
@@ -217,6 +179,7 @@ public class SqlGenImplementation extends SqlGen {
 			return sb.toString(); // Cria a String
 
 		} catch (SecurityException e) {
+			System.out.println("Tabela nao existente no Banco ou falha na conexao!");
 			throw new RuntimeException(e);
 		}
 	}
@@ -326,7 +289,7 @@ public class SqlGenImplementation extends SqlGen {
 	}
 
 	@Override
-	protected PreparedStatement getSqlSelectById(Connection con, Object obj) {
+	protected PreparedStatement getSqlSelectById(Connection con, Object obj, int id) {
 		Class<? extends Object> cl = obj.getClass();
 
 		StringBuilder sb = new StringBuilder();
@@ -358,7 +321,7 @@ public class SqlGenImplementation extends SqlGen {
 					if (anotacaoColuna.nome().isEmpty()) {
 						sb.append(field.getName().toUpperCase()).append(" = ").append("1");
 					} else {
-						sb.append(anotacaoColuna.nome()).append(" = ").append("1");
+						sb.append(anotacaoColuna.nome()).append(" = ").append(id);
 					}
 
 				}
@@ -381,7 +344,7 @@ public class SqlGenImplementation extends SqlGen {
 	}
 
 	@Override
-	protected PreparedStatement getSqlUpdateById(Connection con, Object obj) {
+	protected PreparedStatement getSqlUpdateById(Connection con, Object obj, int id) {
 		Class<? extends Object> cl = obj.getClass();
 
 		StringBuilder sb = new StringBuilder();
@@ -427,9 +390,9 @@ public class SqlGenImplementation extends SqlGen {
 
 
 					if (field.getType().equals(String.class)){
-						sb.append("'1', \n");
+						sb.append(id + ", \n");
 					} else {
-						sb.append("2 \n ");
+						sb.append(id + "\n");
 					}
 				}
 
@@ -454,7 +417,7 @@ public class SqlGenImplementation extends SqlGen {
 
 					} else {
 
-						sb.append(anotacaoColuna.nome()).append(" = ").append("1");
+						sb.append(anotacaoColuna.nome()).append(" = ").append(id);
 
 					}
 
@@ -479,7 +442,7 @@ public class SqlGenImplementation extends SqlGen {
 	}
 
 	@Override
-	protected PreparedStatement getSqlDeleteById(Connection con, Object obj) {
+	protected PreparedStatement getSqlDeleteById(Connection con, Object obj, int id) {
 		Class<? extends Object> cl = obj.getClass();
 
 		StringBuilder sb = new StringBuilder();
@@ -541,19 +504,26 @@ public class SqlGenImplementation extends SqlGen {
 
 	}
 
-	public Connection getCon() {
+	public Connection getCon() { 
+		if (con == null){
+			try {
+				startConnection();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
 		return con;
 	}
 
 	public void setCon(Connection con) {
 		this.con = con;
 	}
-
-/*	public static void main(String[] args) {
+/*
+	public static void main(String[] args) {
 		try {
 			new SqlGenImplementation();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-	}
-*/}
+	}*/
+}
