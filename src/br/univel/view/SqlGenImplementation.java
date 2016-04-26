@@ -18,14 +18,14 @@ public class SqlGenImplementation extends SqlGen {
 	private Connection con;
 
 	public SqlGenImplementation() throws SQLException {
-		Cliente oi = new Cliente(1, "Eduardo", "treta", "treta", EstadoCivil.CASADO);
+		//Cliente oi = new Cliente(1, "Eduardo", "treta", "treta", EstadoCivil.CASADO);
 
 		StartConnection();
-/*
-		try (PreparedStatement ps = con.prepareStatement(getCreateTable(con, oi))) {
-			ps.executeUpdate();
-		}
 
+		/*try (PreparedStatement ps = con.prepareStatement(getCreateTable(con, oi))) {
+			ps.executeUpdate();
+		}*/
+/*
 		try (PreparedStatement ps = con.prepareStatement(getDropTable(con, oi))) {
 			ps.executeUpdate();
 		}
@@ -54,24 +54,28 @@ public class SqlGenImplementation extends SqlGen {
 		System.out.println(teste4.executeQuery());
 */
 /*		PreparedStatement teste5 = getSqlDeleteById(con, oi);
-		System.out.println(teste5);*/
+		System.out.println(teste5);
 		//System.out.println(teste5.executeQuery());
 
 		CloseConnection();
-	}
+*/	}
 
 	private void StartConnection() throws SQLException {
 
-		String url = "jdbc:h2:D:/Eduardo/Desktop/DBA/banco";
+/*		String url = "jdbc:h2:D:/Eduardo/Desktop/DBA/banco";
 		String user = "admin";
 		String pass = "admin";
+*/
+		String url = "jdbc:h2:C:/Users/ehdfreitas/Desktop/Banco de dados/agenda";
+		String user = "sa";
+		String pass = "sa";
 
-		con = DriverManager.getConnection(url, user, pass);
+		setCon(DriverManager.getConnection(url, user, pass));
 
 	}
 
 	private void CloseConnection() throws SQLException {
-		con.close();
+		getCon().close();
 	}
 
 	@Override
@@ -536,11 +540,19 @@ public class SqlGenImplementation extends SqlGen {
 
 	}
 
-	public static void main(String[] args) {
+	public Connection getCon() {
+		return con;
+	}
+
+	public void setCon(Connection con) {
+		this.con = con;
+	}
+
+/*	public static void main(String[] args) {
 		try {
 			new SqlGenImplementation();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-	}
+	}*/
 }
