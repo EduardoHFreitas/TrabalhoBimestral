@@ -18,7 +18,8 @@ public class SqlGenImplementation extends SqlGen {
 	private Connection con;
 
 	public SqlGenImplementation() throws SQLException {
-		//Cliente oi = new Cliente(1, "Eduardo", "treta", "treta", EstadoCivil.CASADO);
+		
+		Cliente oi = new Cliente(1, "Eduardo", "treta", "treta", EstadoCivil.CASADO);
 
 		StartConnection();
 
@@ -31,14 +32,14 @@ public class SqlGenImplementation extends SqlGen {
 		}
 */
 
-		/*
-		 * PreparedStatement teste = getSqlInsert(con, oi); teste.setInt(1, 5);
-		 * teste.setString(2, oi.getNome()); teste.setString(3,
-		 * oi.getEndereco()); teste.setString(4, oi.getTelefone());
-		 * teste.setInt(5, oi.getEstadoCivil().ordinal());
-		 *
-		 * teste.executeUpdate();
-		 */
+		 PreparedStatement teste = getSqlInsert(con, oi);
+		 teste.setInt(1, 5);
+		 teste.setString(2, oi.getNome());
+		 teste.setString(3, oi.getEndereco());
+		 teste.setString(4, oi.getTelefone());
+		 teste.setInt(5, oi.getEstadoCivil().ordinal());
+	 
+		 teste.executeUpdate();
 
 		/*
 		 * PreparedStatement teste2 = getSqlSelectAll(con, oi);
@@ -554,5 +555,5 @@ public class SqlGenImplementation extends SqlGen {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-	}*/
-}
+	}
+*/}
