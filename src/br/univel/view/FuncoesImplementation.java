@@ -1,12 +1,10 @@
 package br.univel.view;
 
-import java.lang.reflect.Field;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import br.univel.enums.EstadoCivil;
 import br.univel.interfaces.Funcoes;
 
 public class FuncoesImplementation implements Funcoes {
@@ -30,21 +28,38 @@ public class FuncoesImplementation implements Funcoes {
 	}
 
 	public void ApagarTabela(Object obj){
-		getImp().getDropTable(getImp().getCon(), obj);
+		String sql = getImp().getDropTable(getImp().getCon(), obj);
+
+		divisao("APAGANDO TABELA");
+		
+		System.out.println("SQL -> " + sql);
+		try (PreparedStatement ps = getImp().getCon().prepareStatement(sql)){
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			System.out.println("TABELA NAO ENCONTRADA OU NAO FOI POSSIVEL ESTABELECER CONEXAO COM O BANCO!");
+		}
+		
+		divisao("TABELA APAGANDO");
+	}
+
+	private void divisao(String funcao) {
+		System.out.println("\n*======================== " + funcao + "\n");
 	}
 
 	public void CriarTabela(Object obj){
 		String sql = getImp().getCreateTable(getImp().getCon(), obj);
 
-		System.out.println("" + sql);
+		divisao("CRIANDO TABELA");
 		
-		System.out.println();
+		System.out.println("SQL -> " + sql);
 		
 		try (PreparedStatement ps = getImp().getCon().prepareStatement(sql)){
-			ps.executeQuery();
+			ps.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		
+		divisao("TABELA CRIADA");
 		
 	}
 	
@@ -53,34 +68,57 @@ public class FuncoesImplementation implements Funcoes {
 	
 		PreparedStatement inclusao = getImp().getSqlInsert(getImp().getCon(), obj);
 		
+		divisao("INCLUINDO REGISTRO");
+		
+		Cliente cliente = (Cliente) obj;
+		
 		try {
 			inclusao.setInt(1, id);
-			inclusao.setString(2, "");
-			inclusao.setString(3, "");
-			inclusao.setString(4, "");
-			inclusao.setInt(5, 0);
+			inclusao.setString(2, cliente.getNome());
+			inclusao.setString(3, cliente.getEndereco());
+			inclusao.setString(4, cliente.getTelefone());
+			inclusao.setInt(5, cliente.getEstadoCivil().ordinal());
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		
+		System.out.println("SQL -> " + inclusao);
+		
 		try {
-			inclusao.executeQuery();
+			inclusao.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		
+		divisao("REGISTRO INCLUIDO");
 	}
 
 	@Override
 	public Object buscar(Object obj, int id) {
-		PreparedStatement buscar = imp.getSqlSelectById(imp.getCon(), obj, id);
+		PreparedStatement buscar = imp.getSqlSelectById(imp.getCon(), obj);
 
+		ResultSet exibir;
+		
+		divisao("BUSCANDO REGISTRO");
+		
 		try {
-			buscar.executeQuery();
+			exibir = buscar.executeQuery();
+			while (exibir.next()) {
+				System.out.println("ID.........: " + exibir.getInt(1)); 
+				System.out.println("NOME.......: " + exibir.getString("CLI_NOME")); 
+				System.out.println("ENDERECO...: " + exibir.getString("CLI_ENDERECO")); 
+				System.out.println("TELEFONE...: " + exibir.getString("CLI_TELEFONE")); 
+				System.out.println("EST.CIVIL..: " + exibir.getString("CLI_ESTADOCIVIL")); 
+				 
+
+				
+			}
 		} catch (SQLException e) {
-			System.out.println("2");
 			e.printStackTrace();
 		}
 
+		divisao("FIM REGISTRO");
+		
 		return null;
 	}
 

@@ -28,7 +28,7 @@ public class Principal extends FuncoesImplementation {
 		
 		listarTodos();
 		
-		buscar(c1, 1);
+		buscar(c2, 2);
 		
 		atualizar(c1, 1);
 		

@@ -29,7 +29,7 @@ public class SqlGenImplementation extends SqlGen {
 		String user = "admin";
 		String pass = "admin";
 */
-		String url = "jdbc:h2:C:/Users/ehdfreitas/Desktop/Banco de dados/agenda";
+		String url = "jdbc:h2:C:/Users/ehdfreitas/Desktop/Banco de dados/banco";
 		String user = "sa";
 		String pass = "sa";
 
@@ -289,9 +289,11 @@ public class SqlGenImplementation extends SqlGen {
 	}
 
 	@Override
-	protected PreparedStatement getSqlSelectById(Connection con, Object obj, int id) {
+	protected PreparedStatement getSqlSelectById(Connection con, Object obj) {
 		Class<? extends Object> cl = obj.getClass();
 
+		Cliente cliente = (Cliente) obj;
+		
 		StringBuilder sb = new StringBuilder();
 
 		// Declaração da tabela.
@@ -321,7 +323,7 @@ public class SqlGenImplementation extends SqlGen {
 					if (anotacaoColuna.nome().isEmpty()) {
 						sb.append(field.getName().toUpperCase()).append(" = ").append("1");
 					} else {
-						sb.append(anotacaoColuna.nome()).append(" = ").append(id);
+						sb.append(anotacaoColuna.nome()).append(" = ").append(cliente.getId());
 					}
 
 				}
@@ -344,9 +346,11 @@ public class SqlGenImplementation extends SqlGen {
 	}
 
 	@Override
-	protected PreparedStatement getSqlUpdateById(Connection con, Object obj, int id) {
+	protected PreparedStatement getSqlUpdateById(Connection con, Object obj) {
 		Class<? extends Object> cl = obj.getClass();
 
+		Cliente cliente = (Cliente) obj;
+		
 		StringBuilder sb = new StringBuilder();
 
 		// Declaração da tabela.
@@ -390,9 +394,9 @@ public class SqlGenImplementation extends SqlGen {
 
 
 					if (field.getType().equals(String.class)){
-						sb.append(id + ", \n");
+						sb.append(cliente.getId() + ", \n");
 					} else {
-						sb.append(id + "\n");
+						sb.append(cliente.getId() + "\n");
 					}
 				}
 
@@ -417,7 +421,7 @@ public class SqlGenImplementation extends SqlGen {
 
 					} else {
 
-						sb.append(anotacaoColuna.nome()).append(" = ").append(id);
+						sb.append(anotacaoColuna.nome()).append(" = ").append(cliente.getId());
 
 					}
 
@@ -442,9 +446,11 @@ public class SqlGenImplementation extends SqlGen {
 	}
 
 	@Override
-	protected PreparedStatement getSqlDeleteById(Connection con, Object obj, int id) {
+	protected PreparedStatement getSqlDeleteById(Connection con, Object obj) {
 		Class<? extends Object> cl = obj.getClass();
 
+		Cliente cliente = (Cliente) obj;
+		
 		StringBuilder sb = new StringBuilder();
 
 		// Declaração da tabela.
@@ -479,7 +485,7 @@ public class SqlGenImplementation extends SqlGen {
 
 					} else {
 
-						sb.append(anotacaoColuna.nome()).append(" = ").append("1");
+						sb.append(anotacaoColuna.nome()).append(" = ").append(cliente.getId());
 
 					}
 
