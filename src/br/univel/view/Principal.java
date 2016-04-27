@@ -30,6 +30,11 @@ public class Principal extends FuncoesImplementation {
 		
 		buscar(c1, 1);
 		
+		c1.setNome("Novo nome");
+		c1.setEndereco("Novo endereco");
+		c1.setTelefone("Novo telefone");
+		c1.setEstadoCivil(EstadoCivil.DIVORCIADO);
+
 		atualizar(c1, 1);
 		
 		excluir(c2, 2);

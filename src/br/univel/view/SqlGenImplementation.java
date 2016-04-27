@@ -384,20 +384,20 @@ public class SqlGenImplementation extends SqlGen {
 
 					if (anotacaoColuna.nome().isEmpty()) {
 
-						sb.append(field.getName().toUpperCase()).append(" = ");
+						sb.append(field.getName().toUpperCase()).append(" = (?)");
 
 					} else {
 
-						sb.append(anotacaoColuna.nome()).append(" = ");
+						sb.append(anotacaoColuna.nome()).append(" = (?)");
 
 					}
 
 
 					if (field.getType().equals(String.class)){
-						sb.append(cliente.getId() + ", \n");
+						sb.append(", \n");
 					} else {
-						sb.append(cliente.getId() + "\n");
-					}
+						sb.append("\n");
+					} 
 				}
 
 			}

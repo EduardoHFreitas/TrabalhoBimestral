@@ -57,6 +57,10 @@ public class Cliente {
 	public EstadoCivil getEstadoCivil() {
 		return estadoCivil;
 	}
+	
+	public void setEstadoCivil(EstadoCivil estadoCivil) {
+		this.estadoCivil = estadoCivil;
+	}
 
 	public Cliente() { // Construtor sem parametros
 		this(0, null, null, null, null);

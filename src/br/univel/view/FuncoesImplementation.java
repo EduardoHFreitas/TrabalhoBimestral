@@ -71,6 +71,8 @@ public class FuncoesImplementation implements Funcoes {
 		
 		divisao("INCLUINDO REGISTRO");
 		
+		System.out.println(inclusao);
+		
 		Cliente cliente = (Cliente) obj;
 		
 		try {
@@ -83,7 +85,12 @@ public class FuncoesImplementation implements Funcoes {
 			e.printStackTrace();
 		}
 		
-		System.out.println("SQL -> " + inclusao);
+		System.out.println("Dados inseridos: ");
+		System.out.println("ID..........: " + id);
+		System.out.println("NOME........: " + cliente.getNome());
+		System.out.println("ENDERECO....: " + cliente.getEndereco());
+		System.out.println("TELEFONE....: " + cliente.getTelefone());
+		System.out.println("ESTADOCIVIL.: " + cliente.getEstadoCivil() + " (gravado como " + cliente.getEstadoCivil().ordinal() + ")");
 		
 		try {
 			inclusao.executeUpdate();
@@ -122,8 +129,39 @@ public class FuncoesImplementation implements Funcoes {
 
 	@Override
 	public void atualizar(Object obj, int id) {
-		// TODO Auto-generated method stub
+		PreparedStatement alterar = imp.getSqlUpdateById(imp.getCon(), obj);
+
+		Cliente cliente = (Cliente) obj;
 		
+		ResultSet exibir;
+
+		divisao("ALTERANDO REGISTRO");
+
+		try {
+			alterar.setString(1, cliente.getNome());
+			alterar.setString(2, cliente.getEndereco());
+			alterar.setString(3, cliente.getTelefone());
+			alterar.setInt(4, cliente.getEstadoCivil().ordinal());
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		System.out.println(alterar);
+		
+		try {
+			alterar.executeUpdate();
+			/*while (exibir.next()) {
+				System.out.println("ID.........: " + exibir.getInt(1)); 
+				System.out.println("NOME.......: " + exibir.getString("CLI_NOME")); 
+				System.out.println("ENDERECO...: " + exibir.getString("CLI_ENDERECO")); 
+				System.out.println("TELEFONE...: " + exibir.getString("CLI_TELEFONE")); 
+				System.out.println("EST.CIVIL..: " + EstadoCivil.values()[exibir.getInt("CLI_ESTADOCIVIL")]);  
+			} */
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		divisao("FIM REGISTRO ALTERADO");
 	}
 
 	@Override
