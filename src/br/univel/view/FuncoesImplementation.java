@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import br.univel.enums.EstadoCivil;
 
 import br.univel.interfaces.Funcoes;
 
@@ -108,10 +109,7 @@ public class FuncoesImplementation implements Funcoes {
 				System.out.println("NOME.......: " + exibir.getString("CLI_NOME")); 
 				System.out.println("ENDERECO...: " + exibir.getString("CLI_ENDERECO")); 
 				System.out.println("TELEFONE...: " + exibir.getString("CLI_TELEFONE")); 
-				System.out.println("EST.CIVIL..: " + exibir.getString("CLI_ESTADOCIVIL")); 
-				 
-
-				
+				System.out.println("EST.CIVIL..: " + EstadoCivil.values()[exibir.getInt("CLI_ESTADOCIVIL")]); 
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
