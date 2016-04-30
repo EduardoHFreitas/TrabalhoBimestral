@@ -57,7 +57,7 @@ public class Cliente {
 	public EstadoCivil getEstadoCivil() {
 		return estadoCivil;
 	}
-	
+
 	public void setEstadoCivil(EstadoCivil estadoCivil) {
 		this.estadoCivil = estadoCivil;
 	}

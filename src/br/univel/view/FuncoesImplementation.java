@@ -1,8 +1,11 @@
 package br.univel.view;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -111,7 +114,7 @@ public class FuncoesImplementation implements Funcoes {
 		try {
 			exibir = buscar.executeQuery();
 			while (exibir.next()) {
-				System.out.println("ID.........: " + exibir.getInt(1));
+				System.out.println("ID.........: " + exibir.getInt("CLI_ID"));
 				System.out.println("NOME.......: " + exibir.getString("CLI_NOME"));
 				System.out.println("ENDERECO...: " + exibir.getString("CLI_ENDERECO"));
 				System.out.println("TELEFONE...: " + exibir.getString("CLI_TELEFONE"));
@@ -179,7 +182,7 @@ public class FuncoesImplementation implements Funcoes {
 
 		try {
 			exibir = excluir.executeUpdate();
-			System.out.println(exibir + " Registro(s) excluidos!");
+			System.out.println(exibir + " Registro(s) excluido(s)!");
 			System.out.println("  Novo nome..........: " + cliente.getNome());
 			System.out.println("  Novo endereço......: " + cliente.getEndereco());
 			System.out.println("  Novo telefone......: " + cliente.getTelefone());
@@ -198,36 +201,77 @@ public class FuncoesImplementation implements Funcoes {
 	@Override
 	public List<Cliente> listarTodos(Object obj) {
 
-		PreparedStatement listar = imp.getSqlDeleteById(imp.getCon(), obj);
+		PreparedStatement listar = imp.getSqlSelectAll(imp.getCon(), obj);
 
-		divisao("APAGANDO TABELA");
+		divisao("LISTANDO TODOS OS REGISTROS");
 
-		System.out.println("SQL -> " + listar);
-		try {
-			listar.executeUpdate();
-		} catch (SQLException e) {
-			System.out.println("TABELA NAO ENCONTRADA OU NAO FOI POSSIVEL ESTABELECER CONEXAO COM O BANCO!");
-		}
+		List<Cliente> clientes = new ArrayList<Cliente>();
 
-		divisao("TABELA APAGADO");
+		ResultSet retorno = null;
+
 
 		try {
-			List<Cliente> ruas = new ArrayList<Cliente>();
+			retorno = listar.executeQuery();
+			while (retorno.next()) {
+				Cliente aux = new Cliente();
+				aux.setId(retorno.getInt("CLI_ID"));
+				aux.setNome(retorno.getString("CLI_NOME"));
+				aux.setEndereco(retorno.getString("CLI_ENDERECO"));
+				aux.setTelefone(retorno.getString("CLI_TELEFONE"));
+				aux.setEstadoCivil(EstadoCivil.values()[retorno.getInt("CLI_ESTADOCIVIL")]);
 
-			ResultSet rs = stmt.executeQuery();
-			while (rs.next()) {
-				// adiciona a Rua na lista
-				ruas.add(populaRua(rs));
-			}
-			rs.close();
-			stmt.close();
-			System.out.println("\n");
-			return ruas;
+				clientes.add(aux);
+
+				}
+
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
 
-		return null;
+
+		for (Cliente c: clientes){
+			System.out.println("ID.........: " + c.getId());
+			System.out.println("NOME.......: " + c.getNome());
+			System.out.println("ENDERECO...: " + c.getEndereco());
+			System.out.println("TELEFONE...: " + c.getTelefone());
+			System.out.println("EST.CIVIL..: " + c.getEstadoCivil());
+			System.out.println("\n");
+		}
+
+
+		divisao("FIM DA LISTAGEM");
+
+		return clientes;
 	}
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -481,19 +481,17 @@ public class SqlGenImplementation extends SqlGen {
 
 					if (anotacaoColuna.nome().isEmpty()) {
 
-						sb.append(field.getName().toUpperCase()).append(" = ").append("(?)");
+						sb.append(field.getName().toUpperCase()).append(" = ").append("?;");
 
 					} else {
 
-						sb.append(anotacaoColuna.nome()).append(" = ").append("(?)");
+						sb.append(anotacaoColuna.nome()).append(" = ").append("?;");
 
 					}
 
 				}
 			}
 		}
-
-		sb.append(";");
 
 		String strSql = sb.toString();
 
