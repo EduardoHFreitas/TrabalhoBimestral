@@ -26,7 +26,7 @@ public class Principal extends FuncoesImplementation {
 
 		salvar(c3);
 
-		listarTodos();
+		listarTodos(new Cliente());
 
 		buscar(c1);
 
@@ -39,7 +39,7 @@ public class Principal extends FuncoesImplementation {
 
 		excluir(c2);
 
-		listarTodos();
+		listarTodos(new Cliente());
 	}
 
 	public static void main(String[] args) {

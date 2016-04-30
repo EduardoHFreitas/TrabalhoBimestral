@@ -481,11 +481,11 @@ public class SqlGenImplementation extends SqlGen {
 
 					if (anotacaoColuna.nome().isEmpty()) {
 
-						sb.append(field.getName().toUpperCase()).append(" = ").append("1");
+						sb.append(field.getName().toUpperCase()).append(" = ").append("(?)");
 
 					} else {
 
-						sb.append(anotacaoColuna.nome()).append(" = ").append(cliente.getId());
+						sb.append(anotacaoColuna.nome()).append(" = ").append("(?)");
 
 					}
 
@@ -524,12 +524,4 @@ public class SqlGenImplementation extends SqlGen {
 	public void setCon(Connection con) {
 		this.con = con;
 	}
-/*
-	public static void main(String[] args) {
-		try {
-			new SqlGenImplementation();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}*/
 }

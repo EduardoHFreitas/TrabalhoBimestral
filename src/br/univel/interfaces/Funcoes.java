@@ -13,6 +13,6 @@ public interface Funcoes <obj, id> {
 
 	public void excluir(Object obj);
 
-	public List<Cliente> listarTodos();
+	public List<Cliente> listarTodos(Object obj);
 
 }

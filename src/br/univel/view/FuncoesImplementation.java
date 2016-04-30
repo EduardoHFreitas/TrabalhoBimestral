@@ -3,9 +3,10 @@ package br.univel.view;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
-import br.univel.enums.EstadoCivil;
 
+import br.univel.enums.EstadoCivil;
 import br.univel.interfaces.Funcoes;
 
 public class FuncoesImplementation implements Funcoes {
@@ -40,7 +41,7 @@ public class FuncoesImplementation implements Funcoes {
 			System.out.println("TABELA NAO ENCONTRADA OU NAO FOI POSSIVEL ESTABELECER CONEXAO COM O BANCO!");
 		}
 
-		divisao("TABELA APAGANDO");
+		divisao("TABELA APAGADO");
 	}
 
 	private void divisao(String funcao) {
@@ -70,8 +71,6 @@ public class FuncoesImplementation implements Funcoes {
 		PreparedStatement inclusao = getImp().getSqlInsert(getImp().getCon(), obj);
 
 		divisao("INCLUINDO REGISTRO");
-
-		System.out.println(inclusao);
 
 		Cliente cliente = (Cliente) obj;
 
@@ -164,13 +163,70 @@ public class FuncoesImplementation implements Funcoes {
 
 	@Override
 	public void excluir(Object obj) {
+		PreparedStatement excluir = imp.getSqlDeleteById(imp.getCon(), obj);
+
+		Cliente cliente = (Cliente) obj;
+
+		int exibir = 0;
+
+		divisao("EXCLUINDO REGISTRO");
+
+		try {
+			excluir.setInt(1, cliente.getId());
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		try {
+			exibir = excluir.executeUpdate();
+			System.out.println(exibir + " Registro(s) excluidos!");
+			System.out.println("  Novo nome..........: " + cliente.getNome());
+			System.out.println("  Novo endereço......: " + cliente.getEndereco());
+			System.out.println("  Novo telefone......: " + cliente.getTelefone());
+			System.out.println("  Novo Estado civil..: " + cliente.getEstadoCivil());
+			System.out.println("  Excluidos para o ID: " + cliente.getId());
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		divisao("FIM REGISTRO EXCLUIDO");
+
 
 
 	}
 
 	@Override
-	public List listarTodos() {
-		// TODO Auto-generated method stub
+	public List<Cliente> listarTodos(Object obj) {
+
+		PreparedStatement listar = imp.getSqlDeleteById(imp.getCon(), obj);
+
+		divisao("APAGANDO TABELA");
+
+		System.out.println("SQL -> " + listar);
+		try {
+			listar.executeUpdate();
+		} catch (SQLException e) {
+			System.out.println("TABELA NAO ENCONTRADA OU NAO FOI POSSIVEL ESTABELECER CONEXAO COM O BANCO!");
+		}
+
+		divisao("TABELA APAGADO");
+
+		try {
+			List<Cliente> ruas = new ArrayList<Cliente>();
+
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				// adiciona a Rua na lista
+				ruas.add(populaRua(rs));
+			}
+			rs.close();
+			stmt.close();
+			System.out.println("\n");
+			return ruas;
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+
 		return null;
 	}
 
