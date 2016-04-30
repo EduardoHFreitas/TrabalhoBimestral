@@ -18,21 +18,21 @@ public class SqlGenImplementation extends SqlGen {
 	private Connection con;
 
 	public SqlGenImplementation() throws SQLException {
-		
+
 		startConnection();
 
 	}
 
 	private void startConnection() throws SQLException {
 
-/*		String url = "jdbc:h2:D:/Eduardo/Desktop/DBA/banco";
+		String url = "jdbc:h2:D:/Eduardo/Desktop/DBA/banco";
 		String user = "admin";
 		String pass = "admin";
-*/
+/*
 		String url = "jdbc:h2:C:/Users/ehdfreitas/Desktop/Banco de dados/banco";
 		String user = "sa";
 		String pass = "sa";
-
+*/
 		setCon(DriverManager.getConnection(url, user, pass));
 
 	}
@@ -293,7 +293,7 @@ public class SqlGenImplementation extends SqlGen {
 		Class<? extends Object> cl = obj.getClass();
 
 		Cliente cliente = (Cliente) obj;
-		
+
 		StringBuilder sb = new StringBuilder();
 
 		// Declaração da tabela.
@@ -350,7 +350,7 @@ public class SqlGenImplementation extends SqlGen {
 		Class<? extends Object> cl = obj.getClass();
 
 		Cliente cliente = (Cliente) obj;
-		
+
 		StringBuilder sb = new StringBuilder();
 
 		// Declaração da tabela.
@@ -397,7 +397,7 @@ public class SqlGenImplementation extends SqlGen {
 						sb.append(", \n");
 					} else {
 						sb.append("\n");
-					} 
+					}
 				}
 
 			}
@@ -417,11 +417,11 @@ public class SqlGenImplementation extends SqlGen {
 
 					if (anotacaoColuna.nome().isEmpty()) {
 
-						sb.append(field.getName().toUpperCase()).append(" = ").append("1");
+						sb.append(field.getName().toUpperCase()).append(" = ").append("(?)");
 
 					} else {
 
-						sb.append(anotacaoColuna.nome()).append(" = ").append(cliente.getId());
+						sb.append(anotacaoColuna.nome()).append(" = ").append("(?)");
 
 					}
 
@@ -450,7 +450,7 @@ public class SqlGenImplementation extends SqlGen {
 		Class<? extends Object> cl = obj.getClass();
 
 		Cliente cliente = (Cliente) obj;
-		
+
 		StringBuilder sb = new StringBuilder();
 
 		// Declaração da tabela.
@@ -510,7 +510,7 @@ public class SqlGenImplementation extends SqlGen {
 
 	}
 
-	public Connection getCon() { 
+	public Connection getCon() {
 		if (con == null){
 			try {
 				startConnection();
