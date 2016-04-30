@@ -5,13 +5,13 @@ import br.univel.view.Cliente;
 
 public interface Funcoes <obj, id> {
 
-	public void salvar(Object obj, int id);
+	public void salvar(Object obj);
 
-	public obj buscar(Object obj, int id);
+	public obj buscar(Object obj);
 
-	public void atualizar(Object obj, int id);
+	public void atualizar(Object obj);
 
-	public void excluir(Object obj, int id);
+	public void excluir(Object obj);
 
 	public List<Cliente> listarTodos();
 
